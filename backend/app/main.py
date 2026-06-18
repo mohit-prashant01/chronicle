@@ -2,12 +2,12 @@ from contextlib import asynccontextmanager
 
 
 from fastapi import FastAPI
-from sqlalchemy import text
+
 
 from app.db.base import Base
 from app.db.database import engine
+from app.schemas.user import UserCreate
 
-import app.models
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -29,13 +29,11 @@ async def root()-> dict[str,str]:
     return{"message":"Chronicles API is running"}
 
 
-@app.get("/health/db")
-async def check_db():
-    async with engine.begin() as conn:
-        await conn.execute(
-            text("SELECT 1")
-        )
-
+@app.post("/validate-user")
+async def validate_user(
+    payload:UserCreate
+):
+    
     return {
-    "database":"connected"
+        "validated_data":payload.model_dump()
     }
