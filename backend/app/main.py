@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from app.db.base import Base
 from app.db.database import engine
 from app.schemas.user import UserCreate
+from app.routers.auth import router as auth_router
 
 
 @asynccontextmanager
@@ -22,6 +23,10 @@ async def lifespan(app:FastAPI):
 app = FastAPI(
     title="Chronicle API",
     lifespan=lifespan
+)
+
+app.include_router(
+    auth_router
 )
 
 @app.get("/")
