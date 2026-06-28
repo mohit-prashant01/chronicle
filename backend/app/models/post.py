@@ -1,30 +1,45 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from datetime import datetime
+from sqlalchemy import (
+    ForeignKey,
+    String,
+    Text,
+    DateTime,
+    func    
+)
 
+from sqlalchemy.orm import(
+    Mapped,
+    mapped_column,
+    relationship
+)
 
 from app.db.base import Base
+
 
 class Post(Base):
     __tablename__="posts"
 
-    id:Mapped[int]=mapped_column(
+    id:Mapped[int]= mapped_column(
         primary_key=True
     )
 
-    title:Mapped[str]=mapped_column(
-        String(255)
+    title: Mapped[str]=mapped_column(
+        String(255),
+        nullable=False
     )
 
-    content:Mapped[str]
+    content:Mapped[str]=mapped_column(
+        Text,
+        nullable=False
+    )
 
     owner_id:Mapped[int]=mapped_column(
         ForeignKey("users.id")
     )
 
-    owner=relationship(
-        "User",
-        back_populates="posts"
+    created_at:Mapped[datetime]=mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now()
     )
+
+    owner=relationship("User",back_populates='posts')
