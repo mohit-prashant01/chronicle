@@ -17,8 +17,8 @@ async def create_post(
     return post
 
 
-async def get_posts(db:AsyncSession):
-    query=(select(Post).order_by(Post.created_at.desc()))
+async def get_posts(db:AsyncSession,limit:int,offset:int):
+    query=(select(Post).order_by(Post.created_at.desc()).limit(limit).offset(offset))
     result = await db.execute(query)
     return result.scalars().all()
 

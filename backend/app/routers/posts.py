@@ -9,7 +9,7 @@ from app.schemas.post import(PostCreate,PostResponse)
 from app.services.post_service import (create_post)
 from app.core.dependencies import (get_current_user)
 from app.services.post_service import(create_post,get_posts,get_post)
-
+from fastapi import Query
 
 router=APIRouter(
     prefix="/posts",
@@ -29,9 +29,12 @@ async def create_new_post(
     )
 
 
-@router.get("/",response_model=List[PostResponse])
-async def read_posts(db:AsyncSession=Depends(get_db)):
-    return await get_posts(db)
+@router.get("/",response_model=list[PostResponse])
+async def read_posts(limit:int=Query(10,ge=1,le=100),
+                     offset:int=Query(0,ge=0),
+                     db:AsyncSession=Depends(get_db)):
+    return await get_posts(db,limit,offset)
+
 
 
 @router.get("/{posts_id}",response_model=PostResponse)
