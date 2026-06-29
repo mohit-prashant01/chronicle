@@ -52,3 +52,18 @@ async def update_post(post_id:int,
     await db.commit()
     await db.refresh(post)
     return post
+
+
+async def delete_post(post_id:int, user_id:int,db:AsyncSession):
+    query=(select(Post).where(Post.id==post_id))
+    result=await db.execute(query)
+    post=result.scalar()
+    if not post:
+        return False
+    
+    if post.owner_id!=user_id:
+        raise PermissionError("Not Allowed")
+    
+    await db.delete(post)
+    await db.commit()
+    return True

@@ -8,9 +8,9 @@ from app.models.user import (User)
 from app.schemas.post import(PostCreate,PostResponse,PostUpdate)
 from app.services.post_service import (create_post,update_post)
 from app.core.dependencies import (get_current_user)
-from app.services.post_service import(create_post,get_posts,get_post)
+from app.services.post_service import(create_post,get_posts,get_post,delete_post)
 from fastapi import Query
-
+from fastapi import (status)
 
 router=APIRouter(
     prefix="/posts",
@@ -65,3 +65,14 @@ async def edit_post(post_id:int,
     
     except PermissionError:
         raise HTTPException(status_code=403,detail="Not Allowed")
+
+
+
+@router.delete("/{post_id}",status_code=status.HTTP_204_NO_CONTENT)
+async def remove_post(post_id:int,db:AsyncSession=Depends(get_db),user:User=Depends(get_current_user)):
+    try:
+        deleted=await delete_post(post_id,user.id,db)
+        if not deleted:
+            raise HTTPException(status_code=404,detail="Post not found")
+    except PermissionError:
+        raise HTTPException(status_code=403,detail="Not allowed")
