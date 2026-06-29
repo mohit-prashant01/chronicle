@@ -3,6 +3,7 @@ from app.models.post import Post
 from app.schemas.post import PostCreate
 from app.schemas.post import PostUpdate
 from sqlalchemy import (select)
+from app.utils.post_utils import (calculate_reading_time)
 
 
 async def create_post(
@@ -12,7 +13,8 @@ async def create_post(
 ):
     post=Post(title=payload.title,
               content=payload.content,
-              owner_id=user_id)
+              owner_id=user_id,
+              reading_time=calculate_reading_time(payload.content))
     db.add(post)
     await db.commit()
     await db.refresh(post)
@@ -48,6 +50,9 @@ async def update_post(post_id:int,
 
     for key,value in updates.items():
         setattr(post,key,value)
+
+    if payload.content:
+        post.reading_time=(calculate_reading_time(payload.content))
 
     await db.commit()
     await db.refresh(post)

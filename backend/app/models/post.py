@@ -4,7 +4,8 @@ from sqlalchemy import (
     String,
     Text,
     DateTime,
-    func    
+    Integer,
+    func   
 )
 
 from sqlalchemy.orm import(
@@ -40,6 +41,12 @@ class Post(Base):
     created_at:Mapped[datetime]=mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
+    )
+
+    reading_time:Mapped[int]=mapped_column(
+        Integer,
+        nullable=False,
+        default=1
     )
 
     owner=relationship("User",back_populates='posts')

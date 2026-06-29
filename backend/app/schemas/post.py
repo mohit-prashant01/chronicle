@@ -14,6 +14,7 @@ class PostCreate(PostBase):
 class PostResponse(PostBase):
     id:int
     owner_id:int
+    reading_time:int
     created_at:datetime
     model_config=ConfigDict(
         from_attributes=True
