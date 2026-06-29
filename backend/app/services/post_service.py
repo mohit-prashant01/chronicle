@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.post import Post
 from app.schemas.post import PostCreate
+from app.schemas.post import PostUpdate
 from sqlalchemy import (select)
+
 
 async def create_post(
         payload:PostCreate,
@@ -26,4 +28,27 @@ async def get_post(post_id:int, db:AsyncSession):
     query=(select(Post).where(Post.id==post_id))
     result=await db.execute(query)
     post=result.scalar()
+    return post
+
+async def update_post(post_id:int,
+                      payload:PostUpdate,
+                      user_id:int,
+                      db:AsyncSession):
+    query=(select(Post).where(Post.id==post_id))
+    result= await db.execute(query)
+    post=result.scalar()
+
+    if not post:
+        return None
+    
+    if post.owner_id!=user_id:
+        raise PermissionError("Not Allowed")
+    
+    updates=(payload.model_dump(exclude_unset=True))
+
+    for key,value in updates.items():
+        setattr(post,key,value)
+
+    await db.commit()
+    await db.refresh(post)
     return post

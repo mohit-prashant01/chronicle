@@ -5,11 +5,12 @@ from fastapi import (HTTPException)
 
 from app.db.database import (get_db)
 from app.models.user import (User)
-from app.schemas.post import(PostCreate,PostResponse)
-from app.services.post_service import (create_post)
+from app.schemas.post import(PostCreate,PostResponse,PostUpdate)
+from app.services.post_service import (create_post,update_post)
 from app.core.dependencies import (get_current_user)
 from app.services.post_service import(create_post,get_posts,get_post)
 from fastapi import Query
+
 
 router=APIRouter(
     prefix="/posts",
@@ -50,3 +51,17 @@ async def read_post(post_id:int,db:AsyncSession=Depends(get_db)):
     return post
 
 
+
+@router.patch("/{post_id}",response_model=PostResponse)
+async def edit_post(post_id:int,
+                    payload:PostUpdate,
+                    db:AsyncSession=Depends(get_db),
+                    user:User=Depends(get_current_user)):
+    try:
+        post=await update_post(post_id, payload,user.id,db)
+        if not post:
+            raise HTTPException(status_code=404,detail="Post Not Found")
+        return post
+    
+    except PermissionError:
+        raise HTTPException(status_code=403,detail="Not Allowed")
