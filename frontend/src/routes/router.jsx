@@ -7,6 +7,7 @@ import Dashboard from "../pages/Dashboard"
 import CreatePost from "../pages/CreatePost"
 import PostDetail from "../pages/PostDetail"
 import NotFound from "../pages/NotFound"
+import ProtectedRoute from "./ProtectedRoute";
 
 
 export const router=createBrowserRouter(
@@ -16,10 +17,26 @@ export const router=createBrowserRouter(
             element:<MainLayout/>,
             children:[
                 {index:true,element:<Home/>},
+
                 {path:"login",element:<Login/>},
+
                 {path:"register",element:<Register/>},
-                {path:"dashboard",element:<Dashboard/>},
-                {path:"create",element:<CreatePost/>},
+
+                {path:"dashboard",
+                    element:(
+                        <ProtectedRoute>
+                            <Dashboard/>
+                        </ProtectedRoute>
+                    )},
+
+                {path:"create",
+                    element:(
+                        <ProtectedRoute>
+                            <CreatePost/>
+                        </ProtectedRoute>
+                    )
+                    },
+
                 {path:"posts/:id",element:<PostDetail/>}               
             ]
         },
