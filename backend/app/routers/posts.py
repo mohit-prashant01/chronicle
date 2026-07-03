@@ -38,7 +38,7 @@ async def read_posts(limit:int=Query(10,ge=1,le=100),
 
 
 
-@router.get("/{posts_id}",response_model=PostResponse)
+@router.get("/{post_id}",response_model=PostResponse)
 async def read_post(post_id:int,db:AsyncSession=Depends(get_db)):
     post=await get_post(post_id,db)
     
