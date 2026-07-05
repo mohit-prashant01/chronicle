@@ -26,9 +26,10 @@ export default function Dashboard(){
                 {
                     posts.map(post=>(
                         <div key={post.id} className="border p-4">
-                            <h2 className ="font-bold">
+                            <Link to={`/posts/${post.id}`}
+                                  className="text-xl font-semibold text-blue-600 hover:underline">
                                 {post.title}
-                            </h2>
+                            </Link>
 
                             <p>
                                 {post.content}

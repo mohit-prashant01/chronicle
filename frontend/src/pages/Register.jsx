@@ -8,9 +8,24 @@ export default function Register(){
         password:""
     })
 
+    const[loading,setLoading]=useState(false)
+    const[error,setError]=useState("")
+    const[success,setSuccess]=useState("")
+
     async function submit(){
-        await registerUser(form)
-        alert("Registered")
+            setLoading(true)
+            setError("")
+            setSuccess("")
+            try{
+                await registerUser(form)
+                setSuccess("Registration successful")
+            }
+            catch(err){
+                setError("Registration Failed")
+            }
+            finally{
+                setLoading(false)
+            }
     }
 
     return(
@@ -42,7 +57,24 @@ export default function Register(){
 
             <button onClick={submit}
                     className="border px-4 py-2"
-            >Register</button>
+                    disabled={loading}
+            >
+                {loading?"Registering...":"Register"}
+            </button>
+          
+            {
+                success && 
+                <p className="text-green-600">
+                    {success}
+                </p>
+            }
+
+            {
+                error &&
+                <p className="text-red-500">
+                    {error}
+                </p>
+            }
 
         </div>
     )
