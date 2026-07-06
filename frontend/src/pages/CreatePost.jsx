@@ -7,9 +7,34 @@ export default function CreatePost(){
     const[title,setTitle]=useState("")
     const[content,setContent]=useState("")
 
+    const[loading,setLoading]=useState(false)
+    const[error,setError]= useState("")
+
     async function submit(){
-        await createPost({title,content})
+        setError("")
+        if(title.trim()===""){
+            setError("Title is required")
+            return 
+        }
+
+        if(content.trim()===""){
+            setError("Content is required")
+            return
+        }
+
+       try{
+        setLoading(true)
+        await createPost({
+            title,content
+        })
         navigate("/dashboard")
+       }
+       catch{
+        setError("Unable to publish")
+       }
+       finally{
+        setLoading(false)
+       }
     }
 
 
@@ -32,10 +57,20 @@ export default function CreatePost(){
                       onChange={e=> setContent(e.target.value)}
             />
 
+            {
+                error &&
+                <p className="text-red-500">
+                    {error}
+                </p>
+
+            }
             <button className="border px-5 py-2"
-                    onClick={submit}>
-                    Publish
+                    onClick={submit}
+                    disabled={loading}
+                    >
+                    {loading ? "Publishing...": "Publish"}
             </button>
+
 
         </div>
     )
