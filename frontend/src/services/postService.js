@@ -6,7 +6,7 @@ export async function createPost(data){
 }
 
 export async function getPosts(){
-    const res=await client.get("/posts")
+    const res=await client.get("/posts/")
     return res.data
 }
 
